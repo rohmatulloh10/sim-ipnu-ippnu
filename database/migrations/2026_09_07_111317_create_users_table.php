@@ -13,11 +13,11 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('anggota_id')->constrained('anggota')->cascadeOnDelete();
+            $table->foreignId('anggota_id')->nullable()->constrained('anggota')->nullOnDelete();
             $table->string('username', 100)->unique();
             $table->string('email')->unique()->nullable();
             $table->string('password');
-            $table->enum('role', ['bph', 'sekretaris', 'bendahara', 'dept_head'])->default('dept_head');
+            $table->enum('role', ['superadmin', 'bph', 'sekretaris', 'bendahara', 'dept_head'])->default('superadmin');
             $table->rememberToken();
             $table->timestamps();
         });

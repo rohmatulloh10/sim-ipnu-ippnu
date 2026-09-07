@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('departemen', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('masa_khidmat_id')->nullable()->constrained('masa_khidmat')->nullOnDelete();
             $table->string('nama');
             $table->text('deskripsi')->nullable();
             $table->timestamps();

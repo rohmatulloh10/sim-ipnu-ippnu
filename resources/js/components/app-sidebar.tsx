@@ -22,6 +22,11 @@ const mainNavItems: NavItem[] = [
         href: dashboard(),
         icon: LayoutGrid,
     },
+    {
+        title: 'Masa Khidmat',
+        href: '/masa-khidmat',
+        icon: LayoutGrid,
+    }
 ];
 
 const footerNavItems: NavItem[] = [

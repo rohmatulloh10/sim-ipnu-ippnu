@@ -23,6 +23,7 @@ return new class extends Migration
             $table->boolean('is_realized')->default(true);
             $table->text('catatan')->nullable();
             $table->string('dok_img')->nullable();
+            $table->foreignId('masa_khidmat_id')->nullable()->constrained('masa_khidmat')->nullOnDelete();
             $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamps();
         });
