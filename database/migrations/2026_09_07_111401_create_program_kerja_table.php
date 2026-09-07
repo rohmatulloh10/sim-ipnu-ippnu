@@ -19,6 +19,8 @@ return new class extends Migration
             $table->date('rencana_tgl');
             $table->string('tempat')->nullable();
             $table->foreignId('pj_program_id')->nullable()->constrained('anggota')->nullOnDelete();
+            $table->foreignId('masa_khidmat_id')->nullable()->constrained('masa_khidmat')->nullOnDelete();
+            $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamps();
         });
     }

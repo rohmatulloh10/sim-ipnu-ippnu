@@ -20,6 +20,7 @@ return new class extends Migration
             $table->decimal('jumlah', 12, 2);
             $table->text('deskripsi')->nullable();
             $table->string('bukti_img')->nullable();
+            $table->foreignId('masa_khidmat_id')->nullable()->constrained('masa_khidmat')->nullOnDelete();
             $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamps();
         });
