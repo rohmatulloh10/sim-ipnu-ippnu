@@ -11,13 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('anggota', function (Blueprint $table) {
+        Schema::create('anggota_ranting', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('departemen_id')->nullable()->constrained('departemen')->nullOnDelete();
             $table->string('nama');
             $table->string('nia', 100)->nullable();
             $table->enum('jenis_kelamin', ['L', 'P']);
-            $table->string('jabatan_pac', 100)->nullable(); // Contoh: Ketua, Sekretaris, Anggota
+            $table->string('jabatan', 100)->nullable(); // Contoh: Ketua, Sekretaris, Anggota
             $table->string('status_ktp', 50)->nullable();
             $table->string('pekerjaan', 100)->nullable();
             $table->string('pendidikan_terakhir', 50)->nullable();
@@ -32,20 +31,21 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        Schema::table('masa_khidmat', function (Blueprint $table) {
-            $table->foreignId('anggota_id')->nullable()->after('id')->constrained('anggota')->nullOnDelete();
+        Schema::table('desa_masa_khidmat', function (Blueprint $table) {
+            $table->foreignId('anggota_ranting_id')->nullable()->after('id')->constrained('anggota_ranting')->nullOnDelete();
         });
     }
 
+    /**
+     * Reverse the migrations.
+     */
     public function down(): void
     {
-        Schema::table('masa_khidmat', function (Blueprint $table) {
-            $table->dropForeign(['anggota_id']);
-            $table->dropColumn('anggota_id');
+        Schema::table('desa_masa_khidmat', function (Blueprint $table) {
+            $table->dropForeign(['anggota_ranting_id']);
+            $table->dropColumn('anggota_ranting_id');
         });
-
-        Schema::dropIfExists('anggota');
-        Schema::dropIfExists('departemen');
-        Schema::dropIfExists('masa_khidmat');
+        Schema::dropIfExists('anggota_ranting');
+        Schema::dropIfExists('desa_masa_khidmat');
     }
 };

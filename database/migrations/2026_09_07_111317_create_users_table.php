@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('username', 100)->unique();
             $table->string('email')->unique()->nullable();
             $table->string('password');
-            $table->enum('role', ['superadmin', 'bph', 'sekretaris', 'bendahara', 'dept_head'])->default('superadmin');
+            $table->enum('role', ['superadmin', 'bph', 'sekretaris', 'bendahara', 'dept_head', 'admin_desa'])->default('superadmin');
             $table->rememberToken();
             $table->timestamps();
         });
