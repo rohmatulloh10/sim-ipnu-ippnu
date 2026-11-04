@@ -7,10 +7,11 @@ export type BreadcrumbItem = {
 };
 
 export type NavSubItem = {
-    subtitle: string
+    subtitle: string;
     subhref: NonNullable<InertiaLinkProps['href']>;
-    subicon?: any
-}
+    subicon?: any;
+    roles?: string[];
+};
 
 export type NavItem = {
     title: string;
@@ -18,4 +19,5 @@ export type NavItem = {
     icon?: LucideIcon | null;
     subitems?: NavSubItem[];
     isActive?: boolean;
+    roles?: string[];
 };

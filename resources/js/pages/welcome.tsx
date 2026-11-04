@@ -4,6 +4,7 @@ import { register } from '@/routes';
 
 export default function Welcome() {
     const { auth } = usePage().props;
+    // const user = auth?.user ?? null;
 
     return (
         <>

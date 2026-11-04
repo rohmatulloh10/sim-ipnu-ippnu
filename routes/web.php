@@ -8,7 +8,12 @@ Route::inertia('/', 'welcome')->name('home');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::inertia('dashboard', 'dashboard')->name('dashboard');
-    Route::get('masa-khidmat', [MasaKhidmat::class, 'index'])->name('masa-khidmat.index');
+    // Route::get('masa-khidmat', [MasaKhidmat::class, 'index'])->name('masa-khidmat.index');
+    Route::middleware(['role:operator,anggota'])->group(function () {
+
+        Route::get('masa-khidmat', [MasaKhidmat::class, 'index'])
+            ->name('masa-khidmat.index');
+    });
 });
 
 require __DIR__ . '/settings.php';
