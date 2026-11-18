@@ -13,11 +13,18 @@ export type NavSubItem = {
     roles?: string[];
 };
 
-export type NavItem = {
+// export type NavItem = {
+//     title: string;
+//     href?: NonNullable<InertiaLinkProps['href']>;
+//     icon?: LucideIcon | null;
+//     subitems?: NavSubItem[];
+//     isActive?: boolean;
+//     roles?: string[];
+// };
+export interface NavItem {
     title: string;
-    href?: NonNullable<InertiaLinkProps['href']>;
+    href: NonNullable<InertiaLinkProps['href']>;
     icon?: LucideIcon | null;
-    subitems?: NavSubItem[];
     isActive?: boolean;
-    roles?: string[];
-};
+    permission?: string; // <-- tambahkan ini
+}

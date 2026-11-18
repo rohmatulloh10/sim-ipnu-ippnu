@@ -1,13 +1,8 @@
 import { Head } from '@inertiajs/react';
 import { PlaceholderPattern } from '@/components/ui/placeholder-pattern';
 import { dashboard } from '@/routes';
-import { usePage } from '@inertiajs/react';
 
 export default function Dashboard() {
-    const props = usePage().props;
-
-    console.log('INERTIA PROPS:', props);
-    console.log('AUTH:', props.auth);
     return (
         <>
             <Head title="Dashboard" />

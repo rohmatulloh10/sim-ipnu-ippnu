@@ -1,305 +1,324 @@
-
-import { Link, usePage } from '@inertiajs/react';
-import type { PageProps } from '@inertiajs/core';
-
+import { type InertiaLinkProps, Link, usePage } from '@inertiajs/react';
+// import { dashboard } from '@/routes';
 import {
+    ArrowLeftRight,
     BookOpen,
-    FolderGit2,
-    LayoutDashboard,
-    CalendarClock,
+    Briefcase,
     Building2,
-    Users,
+    ChevronRight,
+    Coins,
+    FolderGit2,
+    HandCoins,
+    Landmark,
+    LayoutGrid,
+    type LucideIcon,
     Mail,
-    Banknote,
-    ClipboardList,
-    CalendarDays,
-    Network,
-    History,
+    Package,
+    Settings,
+    Users,
 } from 'lucide-react';
-
 import AppLogo from '@/components/app-logo';
 import { NavFooter } from '@/components/nav-footer';
-import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
-
+import {
+    Collapsible,
+    CollapsibleContent,
+    CollapsibleTrigger,
+} from '@/components/ui/collapsible';
 import {
     Sidebar,
     SidebarContent,
     SidebarFooter,
+    SidebarGroup,
+    SidebarGroupLabel,
     SidebarHeader,
     SidebarMenu,
     SidebarMenuButton,
     SidebarMenuItem,
+    SidebarMenuSub,
+    SidebarMenuSubButton,
+    SidebarMenuSubItem,
 } from '@/components/ui/sidebar';
-
 import { dashboard } from '@/routes';
-import type { NavItem } from '@/types';
 
-// ========================================
-// INTERFACE DATA PENGGUNA
-// ========================================
-
-interface AuthUser {
-    id: number;
-    username: string;
-    email: string;
-    role_id: number;
-    role: string | null;
+interface SubMenuItem {
+    title: string;
+    href: NonNullable<InertiaLinkProps['href']>;
+    permission: string;
 }
 
-interface SharedData extends PageProps {
-    auth: {
-        user: AuthUser | null;
-    };
-    name: string;
-    sidebarOpen: boolean;
+interface MenuItem {
+    title: string;
+    icon: LucideIcon;
+    href?: NonNullable<InertiaLinkProps['href']>;
+    permission?: string;
+    items?: SubMenuItem[];
 }
 
-// ========================================
-// INTERFACE MENU DAN ROLE
-// ========================================
+interface SharedAuthProps {
+    permissions?: string[];
+    has_multiple_assignments?: boolean;
+    active_assignment?: {
+        id: number;
+        role?: {
+            nama_role: string;
+        };
+        struktur_organisasi?: {
+            nama_unit: string;
+            tingkat: string;
+        };
+    } | null;
+}
 
-type RoleNavItem = NavItem & {
-    roles?: string[];
-};
-
-// ========================================
-// DAFTAR ROLE
-// ========================================
-
-const allRoles = [
-    'superadmin',
-    'bph',
-    'sekretaris',
-    'bendahara',
-    'dept_head',
-    'admin_desa',
-];
-
-// ========================================
-// MENU UTAMA
-// ========================================
-
-const mainNavItems: RoleNavItem[] = [
+const navMenuItems: MenuItem[] = [
     {
         title: 'Dashboard',
         href: dashboard(),
-        icon: LayoutDashboard,
-        roles: allRoles,
+        icon: LayoutGrid,
+        permission: 'menu.dashboard',
     },
-
     {
-        title: 'Masa Khidmat',
-        icon: CalendarClock,
-        roles: ['superadmin', 'bph', 'sekretaris', 'bendahara'],
-        subitems: [
-            {
-                subtitle: 'Dashboard',
-                subhref: '/masa-khidmat',
-                roles: ['superadmin', 'bph', 'sekretaris', 'bendahara'],
-            },
-            {
-                subtitle: 'Master',
-                subhref: '/masa-khidmat/master',
-                roles: ['superadmin', 'bph', 'sekretaris'],
-            },
-        ],
-    },
-
-    {
-        title: 'Departement',
+        title: 'Organisasi',
         icon: Building2,
-        roles: ['superadmin', 'bph', 'sekretaris', 'dept_head'],
-        subitems: [
+        items: [
             {
-                subtitle: 'Dashboard',
-                subhref: '/departement',
-                roles: ['superadmin', 'bph', 'sekretaris', 'dept_head'],
+                title: 'Struktur Organisasi',
+                href: '/organisasi/struktur',
+                permission: 'organisasi.struktur.view',
             },
             {
-                subtitle: 'Master',
-                subhref: '/departement/master',
-                roles: ['superadmin', 'bph', 'dept_head'],
+                title: 'Masa Khidmat',
+                href: '/organisasi/masa-khidmat',
+                permission: 'organisasi.periode.view',
+            },
+            {
+                title: 'Departemen',
+                href: '/organisasi/departemen',
+                permission: 'organisasi.departemen.view',
             },
         ],
     },
-
     {
         title: 'Anggota',
         icon: Users,
-        roles: ['superadmin', 'bph', 'sekretaris', 'dept_head', 'admin_desa'],
-        subitems: [
+        items: [
             {
-                subtitle: 'Dashboard',
-                subhref: '/anggota',
-                roles: ['superadmin', 'bph', 'sekretaris', 'dept_head', 'admin_desa'],
+                title: 'Biodata Anggota',
+                href: '/anggota',
+                permission: 'anggota.biodata.view',
             },
             {
-                subtitle: 'Master',
-                subhref: '/anggota/master',
-                roles: ['superadmin', 'bph', 'sekretaris', 'dept_head', 'admin_desa'],
-            },
-        ],
-    },
-
-    {
-        title: 'Surat',
-        icon: Mail,
-        roles: ['superadmin', 'bph', 'sekretaris', 'admin_desa'],
-        subitems: [
-            {
-                subtitle: 'Dashboard',
-                subhref: '/surat',
-                roles: ['superadmin', 'bph', 'sekretaris', 'admin_desa'],
-            },
-            {
-                subtitle: 'Master',
-                subhref: '/surat/master',
-                roles: ['superadmin', 'bph', 'sekretaris'],
+                title: 'Penugasan Pengurus',
+                href: '/anggota/penugasan',
+                permission: 'anggota.penugasan.view',
             },
         ],
     },
-
-    {
-        title: 'Keuangan',
-        icon: Banknote,
-        roles: ['superadmin', 'bph', 'bendahara'],
-        subitems: [
-            {
-                subtitle: 'Dashboard',
-                subhref: '/keuangan',
-                roles: ['superadmin', 'bph', 'bendahara'],
-            },
-            {
-                subtitle: 'Master',
-                subhref: '/keuangan/master',
-                roles: ['superadmin', 'bendahara'],
-            },
-        ],
-    },
-
     {
         title: 'Program Kerja',
-        icon: ClipboardList,
-        roles: ['superadmin', 'bph', 'sekretaris', 'dept_head'],
-        subitems: [
+        icon: Briefcase,
+        items: [
             {
-                subtitle: 'Dashboard',
-                subhref: '/program-kerja',
-                roles: ['superadmin', 'bph', 'sekretaris', 'dept_head'],
+                title: 'Kategori Proker',
+                href: '/proker/kategori',
+                permission: 'proker.kategori.view',
             },
             {
-                subtitle: 'Master',
-                subhref: '/program-kerja/master',
-                roles: ['superadmin', 'bph', 'dept_head'],
-            },
-        ],
-    },
-
-    {
-        title: 'Kegiatan',
-        icon: CalendarDays,
-        roles: allRoles,
-        subitems: [
-            {
-                subtitle: 'Dashboard',
-                subhref: '/kegiatan',
-                roles: allRoles,
+                title: 'Rapat Kerja',
+                href: '/proker/raker',
+                permission: 'proker.raker.view',
             },
             {
-                subtitle: 'Master',
-                subhref: '/kegiatan/master',
-                roles: ['superadmin', 'bph', 'sekretaris', 'dept_head', 'admin_desa'],
+                title: 'Program Kerja',
+                href: '/proker/daftar',
+                permission: 'proker.daftar.view',
+            },
+            {
+                title: 'Realisasi & LPJ',
+                href: '/proker/realisasi',
+                permission: 'proker.realisasi.view',
             },
         ],
     },
-
     {
-        title: 'Ranting & PK',
-        icon: Network,
-        roles: ['superadmin', 'bph', 'sekretaris', 'admin_desa'],
-        subitems: [
+        title: 'Kesekretariatan',
+        icon: Mail,
+        items: [
             {
-                subtitle: 'Dashboard',
-                subhref: '/ranting-pk',
-                roles: ['superadmin', 'bph', 'sekretaris', 'admin_desa'],
+                title: 'Kategori Surat',
+                href: '/surat/kategori',
+                permission: 'surat.kategori.view',
             },
             {
-                subtitle: 'Master',
-                subhref: '/ranting-pk/master',
-                roles: ['superadmin', 'bph', 'admin_desa'],
+                title: 'Surat Masuk',
+                href: '/surat/masuk',
+                permission: 'surat.masuk.view',
+            },
+            {
+                title: 'Surat Keluar',
+                href: '/surat/keluar',
+                permission: 'surat.keluar.view',
+            },
+            {
+                title: 'Arsip Dokumen',
+                href: '/surat/arsip',
+                permission: 'surat.arsip.view',
             },
         ],
     },
-
     {
-        title: 'Log History',
-        href: '/log-history',
-        icon: History,
-        roles: ['superadmin'],
+        title: 'Inventaris',
+        icon: Package,
+        items: [
+            {
+                title: 'Kategori Barang',
+                href: '/inventaris/kategori',
+                permission: 'inventaris.kategori.view',
+            },
+            {
+                title: 'Data Inventaris',
+                href: '/inventaris/barang',
+                permission: 'inventaris.barang.view',
+            },
+            {
+                title: 'Peminjaman',
+                href: '/inventaris/peminjaman',
+                permission: 'inventaris.peminjaman.view',
+            },
+        ],
+    },
+    {
+        title: 'Keuangan',
+        icon: Coins,
+        items: [
+            {
+                title: 'Kas & Rekening',
+                href: '/keuangan/kas',
+                permission: 'keuangan.kas.view',
+            },
+            {
+                title: 'Kategori Keuangan',
+                href: '/keuangan/kategori',
+                permission: 'keuangan.kategori.view',
+            },
+            {
+                title: 'Transaksi Kas',
+                href: '/keuangan/transaksi',
+                permission: 'keuangan.transaksi.view',
+            },
+        ],
+    },
+    {
+        title: 'Iuran Anggota',
+        icon: HandCoins,
+        items: [
+            {
+                title: 'Tagihan Iuran',
+                href: '/iuran/tagihan',
+                permission: 'iuran.tagihan.view',
+            },
+            {
+                title: 'Pembayaran Iuran',
+                href: '/iuran/pembayaran',
+                permission: 'iuran.pembayaran.view',
+            },
+        ],
+    },
+    {
+        title: 'Pendanaan Proker',
+        icon: Landmark,
+        items: [
+            {
+                title: 'Pihak Pendana',
+                href: '/pendanaan/pihak',
+                permission: 'pendanaan.pihak.view',
+            },
+            {
+                title: 'Proposal Pendanaan',
+                href: '/pendanaan/proposal',
+                permission: 'pendanaan.proposal.view',
+            },
+            {
+                title: 'Penerimaan Dana',
+                href: '/pendanaan/penerimaan',
+                permission: 'pendanaan.penerimaan.view',
+            },
+        ],
+    },
+    {
+        title: 'Pengaturan & Audit',
+        icon: Settings,
+        items: [
+            {
+                title: 'Akun Pengguna',
+                href: '/pengaturan/users',
+                permission: 'akses.users.view',
+            },
+            {
+                title: 'Penugasan Role',
+                href: '/pengaturan/assignment',
+                permission: 'akses.assignment.view',
+            },
+            {
+                title: 'Role & Hak Akses',
+                href: '/pengaturan/roles',
+                permission: 'akses.roles.view',
+            },
+            {
+                title: 'Audit Logs',
+                href: '/pengaturan/audit-logs',
+                permission: 'audit.logs.view',
+            },
+        ],
     },
 ];
 
-// ========================================
-// MENU FOOTER
-// ========================================
-
-const footerNavItems: NavItem[] = [
-    // {
-    //     title: 'Repository',
-    //     href: 'https://github.com/laravel/react-starter-kit',
-    //     icon: FolderGit2,
-    // },
-    // {
-    //     title: 'Documentation',
-    //     href: 'https://laravel.com/docs/starter-kits#react',
-    //     icon: BookOpen,
-    // },
+const footerNavItems = [
+    {
+        title: 'Repository',
+        href: 'https://github.com/laravel/react-starter-kit',
+        icon: FolderGit2,
+    },
+    {
+        title: 'Documentation',
+        href: 'https://laravel.com/docs/starter-kits#react',
+        icon: BookOpen,
+    },
 ];
-
-// ========================================
-// KOMPONEN APP SIDEBAR
-// ========================================
 
 export function AppSidebar() {
-    // console.log('APP SIDEBAR RENDERED');
-    const page = usePage<SharedData>();
-
-    // console.log('INERTIA PROPS:', page.props);
-    // console.log('AUTH DATA:', page.props.auth);
-    // console.log('USER DATA:', page.props.auth?.user);
-    // console.log('USER ROLE:', page.props.auth?.user?.role);
-
-
-    // Role pengguna yang sedang login
+    const page = usePage<{ auth: SharedAuthProps }>();
     const { auth } = page.props;
-    const userRole = auth?.user?.role ?? '';
+    const currentUrl = page.url;
 
-    // Filter menu berdasarkan role
-    const filteredNavItems: NavItem[] = mainNavItems
-        .filter((item) => {
-            return !item.roles || item.roles.includes(userRole);
-        })
-        .map((item) => {
-            if (!item.subitems) {
-                return item;
+    const permissions = auth?.permissions ?? [];
+    const activeAssignment = auth?.active_assignment;
+    const hasMultipleAssignments = auth?.has_multiple_assignments ?? false;
+
+    // Filter menu utama & sub-menu berdasarkan permission role aktif
+    const visibleMenus = navMenuItems
+        .map((menu) => {
+            if (!menu.items) {
+                const allowed =
+                    !menu.permission || permissions.includes(menu.permission);
+                return allowed ? menu : null;
             }
 
-            const filteredSubitems = item.subitems.filter((subitem) => {
-                return (
-                    !subitem.roles ||
-                    subitem.roles.includes(userRole)
-                );
-            });
+            const allowedSubItems = menu.items.filter((sub) =>
+                permissions.includes(sub.permission),
+            );
 
-            return {
-                ...item,
-                subitems: filteredSubitems,
-            };
+            return allowedSubItems.length > 0
+                ? { ...menu, items: allowedSubItems }
+                : null;
         })
-        .filter((item) => {
-            return !item.subitems || item.subitems.length > 0;
-        });
+        .filter((item): item is MenuItem => item !== null);
+
+    const isPathActive = (href?: NonNullable<InertiaLinkProps['href']>) => {
+        if (!href) return false;
+        const targetUrl = typeof href === 'string' ? href : href.url;
+        return currentUrl === targetUrl || currentUrl.startsWith(`${targetUrl}/`);
+    };
 
     return (
         <Sidebar collapsible="icon" variant="inset">
@@ -312,19 +331,122 @@ export function AppSidebar() {
                             </Link>
                         </SidebarMenuButton>
                     </SidebarMenuItem>
+
+                    {/* Info Struktur & Role Aktif + Tombol Ganti Peran */}
+                    {activeAssignment && (
+                        <SidebarMenuItem className="mt-1 px-2 group-data-[collapsible=icon]:hidden">
+                            <div className="flex items-center justify-between rounded-lg border border-sidebar-border bg-sidebar-accent/50 px-2.5 py-2 text-xs">
+                                <div className="min-w-0 flex-1">
+                                    <p className="truncate font-semibold text-sidebar-foreground">
+                                        {activeAssignment.struktur_organisasi
+                                            ?.nama_unit ?? 'Struktur Aktif'}
+                                    </p>
+                                    <p className="truncate text-[11px] text-muted-foreground">
+                                        {activeAssignment.role?.nama_role ??
+                                            'Pengurus'}
+                                    </p>
+                                </div>
+
+                                {hasMultipleAssignments && (
+                                    <Link
+                                        href="/pilih-struktur?ganti=1"
+                                        title="Ganti Struktur / Peran"
+                                        className="ml-2 inline-flex shrink-0 items-center gap-1 rounded-md border bg-background px-2 py-1 text-[11px] font-medium hover:bg-accent"
+                                    >
+                                        <ArrowLeftRight className="h-3 w-3" />
+                                        <span>Ganti</span>
+                                    </Link>
+                                )}
+                            </div>
+                        </SidebarMenuItem>
+                    )}
                 </SidebarMenu>
             </SidebarHeader>
 
             <SidebarContent>
-                <NavMain items={filteredNavItems} />
+                <SidebarGroup>
+                    <SidebarGroupLabel>Menu Utama</SidebarGroupLabel>
+                    <SidebarMenu>
+                        {visibleMenus.map((menu) => {
+                            // 1. Menu tunggal tanpa sub-menu (misal: Dashboard)
+                            if (!menu.items) {
+                                return (
+                                    <SidebarMenuItem key={menu.title}>
+                                        <SidebarMenuButton
+                                            asChild
+                                            isActive={isPathActive(menu.href)}
+                                            tooltip={menu.title}
+                                        >
+                                            <Link
+                                                href={menu.href ?? '#'}
+                                                prefetch
+                                            >
+                                                <menu.icon />
+                                                <span>{menu.title}</span>
+                                            </Link>
+                                        </SidebarMenuButton>
+                                    </SidebarMenuItem>
+                                );
+                            }
+
+                            // 2. Menu dengan sub-menu (Collapsible)
+                            const isGroupOpen = menu.items.some((sub) =>
+                                isPathActive(sub.href),
+                            );
+
+                            return (
+                                <Collapsible
+                                    key={menu.title}
+                                    asChild
+                                    defaultOpen={isGroupOpen}
+                                    className="group/collapsible"
+                                >
+                                    <SidebarMenuItem>
+                                        <CollapsibleTrigger asChild>
+                                            <SidebarMenuButton
+                                                tooltip={menu.title}
+                                                isActive={isGroupOpen}
+                                            >
+                                                <menu.icon />
+                                                <span>{menu.title}</span>
+                                                <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                                            </SidebarMenuButton>
+                                        </CollapsibleTrigger>
+                                        <CollapsibleContent>
+                                            <SidebarMenuSub>
+                                                {menu.items.map((sub) => (
+                                                    <SidebarMenuSubItem
+                                                        key={sub.title}
+                                                    >
+                                                        <SidebarMenuSubButton
+                                                            asChild
+                                                            isActive={isPathActive(
+                                                                sub.href,
+                                                            )}
+                                                        >
+                                                            <Link
+                                                                href={sub.href}
+                                                                prefetch
+                                                            >
+                                                                <span>
+                                                                    {sub.title}
+                                                                </span>
+                                                            </Link>
+                                                        </SidebarMenuSubButton>
+                                                    </SidebarMenuSubItem>
+                                                ))}
+                                            </SidebarMenuSub>
+                                        </CollapsibleContent>
+                                    </SidebarMenuItem>
+                                </Collapsible>
+                            );
+                        })}
+                    </SidebarMenu>
+                </SidebarGroup>
             </SidebarContent>
 
             <SidebarFooter>
-                <NavFooter
-                    items={footerNavItems}
-                    className="mt-auto"
-                />
-
+                {/* <NavFooter items={footerNavItems} className="mt-auto" /> */}
                 <NavUser />
             </SidebarFooter>
         </Sidebar>

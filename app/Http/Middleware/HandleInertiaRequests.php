@@ -34,26 +34,44 @@ class HandleInertiaRequests extends Middleware
      * @return array<string, mixed>
      */
     public function share(Request $request): array
-    {
-        $user = $request->user();
+{
+    $user = $request->user();
 
-        return [
-            ...parent::share($request),
+    $activeAssignment = $request->attributes->get('active_assignment');
 
-            'name' => config('app.name'),
-
-            'auth' => [
-                'user' => $user ? [
-                    'id' => $user->id,
-                    'username' => $user->username,
-                    'email' => $user->email,
-                    'role_id' => $user->role_id,
-                    'role' => $user->role?->name,
-                ] : null,
-            ],
-
-            'sidebarOpen' => ! $request->hasCookie('sidebar_state')
-                || $request->cookie('sidebar_state') === 'true',
-        ];
+    if (! $activeAssignment && $user && $request->session()->has('active_assignment_id')) {
+        $activeAssignment = $user->strukturRoles()
+            ->with(['role.permissions', 'strukturOrganisasi'])
+            ->where('is_active', true)
+            ->find($request->session()->get('active_assignment_id'));
+    } else {
+        $activeAssignment?->loadMissing(['role.permissions', 'strukturOrganisasi']);
     }
+
+    return [
+        ...parent::share($request),
+
+        'name' => config('app.name'),
+
+        'auth' => [
+            'user' => $user ? [
+                'id' => $user->id,
+                'name' => $user->name,
+                'username' => $user->username,
+                'email' => $user->email,
+                'is_active' => $user->is_active,
+            ] : null,
+            'active_assignment' => $activeAssignment,
+            'permissions' => $activeAssignment?->role?->permissions
+                ? $activeAssignment->role->permissions->pluck('nama_permission')->toArray()
+                : [],
+            'has_multiple_assignments' => $user
+                ? $user->strukturRoles()->where('is_active', true)->count() > 1
+                : false,
+        ],
+
+        'sidebarOpen' => ! $request->hasCookie('sidebar_state')
+            || $request->cookie('sidebar_state') === 'true',
+    ];
+}
 }

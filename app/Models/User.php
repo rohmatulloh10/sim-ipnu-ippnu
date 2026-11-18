@@ -3,26 +3,26 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Database\Factories\UserFactory;
+use App\Models\Pengguna\Models\User_StrukturRoles;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
 use Laravel\Fortify\TwoFactorAuthenticatable;
-use Laravel\Sanctum\HasApiTokens;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
+
 
 /**
  * @property int $id
+ * @property string $username
+ * @property bool $is_active
  * @property string $name
  * @property string $email
  * @property Carbon|null $email_verified_at
  * @property string $password
- * @property int|null $role_id
- * @property int|null $anggota_id
- * @property int|null $desa_id
  * @property string|null $two_factor_secret
  * @property string|null $two_factor_recovery_codes
  * @property Carbon|null $two_factor_confirmed_at
@@ -30,7 +30,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
-#[Fillable(['username', 'email', 'password', 'role_id', 'anggota_id', 'desa_id'])]
+#[Fillable(['name', 'username', 'email', 'password', 'is_active'])]
 #[Hidden(['password', 'two_factor_secret', 'two_factor_recovery_codes', 'remember_token'])]
 class User extends Authenticatable
 {
@@ -48,11 +48,62 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'two_factor_confirmed_at' => 'datetime',
+            'is_active' => 'boolean',
         ];
     }
 
-    public function role(): BelongsTo
+    public function strukturRoles(): HasMany
     {
-        return $this->belongsTo(Role::class, 'role_id');
+        return $this->hasMany(User_StrukturRoles::class, 'user_id');
     }
+
+    /**
+     * Ambil record penugasan aktif (User_StrukturRoles) saat ini
+     */
+    public function activeAssignment(?int $assignmentId = null)
+    {
+        $assignmentId = $assignmentId ?? session('active_assignment_id');
+
+        if (! $assignmentId) {
+            return null;
+        }
+
+        return $this->strukturRoles()
+            ->with(['role.permissions', 'strukturOrganisasi'])
+            ->where('is_active', true)
+            ->find($assignmentId);
+    }
+
+    /**
+     * Cek apakah penugasan aktif saat ini memiliki permission tertentu
+     */
+    public function hasActivePermission(string $namaPermission, ?int $assignmentId = null): bool
+    {
+        $assignment = $this->activeAssignment($assignmentId);
+
+        if (! $assignment || ! $assignment->role) {
+            return false;
+        }
+
+        return $assignment->role->permissions
+            ->contains('nama_permission', $namaPermission);
+    }
+
+    /**
+     * Ambil daftar nama_permission milik penugasan aktif (untuk React/Inertia)
+     */
+    public function getActivePermissions(?int $assignmentId = null): array
+    {
+        $assignment = $this->activeAssignment($assignmentId);
+
+        if (! $assignment || ! $assignment->role) {
+            return [];
+        }
+
+        return $assignment->role->permissions
+            ->pluck('nama_permission')
+            ->toArray();
+    }
+
+
 }

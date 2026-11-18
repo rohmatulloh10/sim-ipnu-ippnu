@@ -1,4 +1,4 @@
-import { createInertiaApp } from '@inertiajs/react';
+import { createInertiaApp, router } from '@inertiajs/react';
 import { Toaster } from '@/components/ui/sonner';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { initializeTheme } from '@/hooks/use-appearance';
@@ -22,7 +22,6 @@ void createInertiaApp({
                 return AppLayout;
         }
     },
-    // strictMode: true,
     strictMode: false,
     withApp(app) {
         return (
@@ -39,3 +38,9 @@ void createInertiaApp({
 
 // This will set light / dark mode on load...
 initializeTheme();
+
+// Debugging sementara untuk melacak perpindahan rute Inertia
+router.on('before', (event) => {
+    console.log('NAVIGASI INERTIA KE:', event.detail.visit.url.href);
+    console.trace();
+});

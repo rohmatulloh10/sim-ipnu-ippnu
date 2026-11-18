@@ -1,0 +1,40 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        Schema::create('user_struktur_roles', function (Blueprint $table) {
+            $table->id();
+
+            $table->foreignId('user_id')
+                ->constrained('users')
+                ->cascadeOnDelete();
+
+            $table->foreignId('role_id')
+                ->constrained('roles')
+                ->restrictOnDelete();
+
+            $table->foreignId('id_struktur')
+                ->constrained('struktur_organisasi')
+                ->restrictOnDelete();
+
+            $table->boolean('is_active')->default(true);
+            $table->timestamps();
+
+            $table->unique(
+                ['user_id', 'role_id', 'id_struktur'],
+                'uq_user_role_struktur'
+            );
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::dropIfExists('user_struktur_roles');
+    }
+};

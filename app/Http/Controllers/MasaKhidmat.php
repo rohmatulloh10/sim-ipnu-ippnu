@@ -10,12 +10,12 @@ class MasaKhidmat extends Controller
 {
     public function index()
     {
-        $masaKhidmat = MasaKhidmatModel::all();
-        $coba = User::with('role')->find(1);
+        // $masaKhidmat = MasaKhidmatModel::all();
+        // $coba = User::with('role')->find(1);
         // return view('masa_khidmat.index', compact('masaKhidmat'));
-        return inertia('masa_khidmat/index', [
-            'masaKhidmat' => $masaKhidmat,
-            'coba' => $coba,
-        ]);
+        // return inertia('masa_khidmat/index', [
+        //     'masaKhidmat' => $masaKhidmat,
+        //     'coba' => $coba,
+        // ]);
     }
 }

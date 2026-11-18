@@ -8,6 +8,7 @@ use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets;
 use Illuminate\Http\Request;
 use App\Http\Middleware\CheckRole;
+use App\Http\Middleware\EnsureActiveStructure;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -24,15 +25,14 @@ return Application::configure(basePath: dirname(__DIR__))
             AddLinkHeadersForPreloadedAssets::class,
         ]);
 
+        // $middleware->alias([
+        //     'role' => CheckRole::class,
+        // ]);
         $middleware->alias([
-            'role' => CheckRole::class,
+            'active.structure' => EnsureActiveStructure::class,
         ]);
     })
-    // ->withMiddleware(function (Middleware $middleware): void {
-    //     $middleware->alias([
-    //         'role' => CheckRole::class,
-    //     ]);
-    // })
+
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(
             fn(Request $request) => $request->is('api/*') || $request->expectsJson(),
