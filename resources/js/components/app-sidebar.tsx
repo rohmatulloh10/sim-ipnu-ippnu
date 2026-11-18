@@ -2,12 +2,12 @@ import { type InertiaLinkProps, Link, usePage } from '@inertiajs/react';
 // import { dashboard } from '@/routes';
 import {
     ArrowLeftRight,
-    BookOpen,
+    // BookOpen,
     Briefcase,
     Building2,
     ChevronRight,
     Coins,
-    FolderGit2,
+    // FolderGit2,
     HandCoins,
     Landmark,
     LayoutGrid,
@@ -18,7 +18,6 @@ import {
     Users,
 } from 'lucide-react';
 import AppLogo from '@/components/app-logo';
-import { NavFooter } from '@/components/nav-footer';
 import { NavUser } from '@/components/nav-user';
 import {
     Collapsible,
@@ -273,18 +272,18 @@ const navMenuItems: MenuItem[] = [
     },
 ];
 
-const footerNavItems = [
-    {
-        title: 'Repository',
-        href: 'https://github.com/laravel/react-starter-kit',
-        icon: FolderGit2,
-    },
-    {
-        title: 'Documentation',
-        href: 'https://laravel.com/docs/starter-kits#react',
-        icon: BookOpen,
-    },
-];
+// const footerNavItems = [
+//     {
+//         title: 'Repository',
+//         href: 'https://github.com/laravel/react-starter-kit',
+//         icon: FolderGit2,
+//     },
+//     {
+//         title: 'Documentation',
+//         href: 'https://laravel.com/docs/starter-kits#react',
+//         icon: BookOpen,
+//     },
+// ];
 
 export function AppSidebar() {
     const page = usePage<{ auth: SharedAuthProps }>();
@@ -317,7 +316,9 @@ export function AppSidebar() {
     const isPathActive = (href?: NonNullable<InertiaLinkProps['href']>) => {
         if (!href) return false;
         const targetUrl = typeof href === 'string' ? href : href.url;
-        return currentUrl === targetUrl || currentUrl.startsWith(`${targetUrl}/`);
+        return (
+            currentUrl === targetUrl || currentUrl.startsWith(`${targetUrl}/`)
+        );
     };
 
     return (
@@ -335,13 +336,13 @@ export function AppSidebar() {
                     {/* Info Struktur & Role Aktif + Tombol Ganti Peran */}
                     {activeAssignment && (
                         <SidebarMenuItem className="mt-1 px-2 group-data-[collapsible=icon]:hidden">
-                            <div className="flex items-center justify-between rounded-lg border border-sidebar-border bg-sidebar-accent/50 px-2.5 py-2 text-xs">
+                            <div className="border-sidebar-border bg-sidebar-accent/50 flex items-center justify-between rounded-lg border px-2.5 py-2 text-xs">
                                 <div className="min-w-0 flex-1">
-                                    <p className="truncate font-semibold text-sidebar-foreground">
+                                    <p className="text-sidebar-foreground truncate font-semibold">
                                         {activeAssignment.struktur_organisasi
                                             ?.nama_unit ?? 'Struktur Aktif'}
                                     </p>
-                                    <p className="truncate text-[11px] text-muted-foreground">
+                                    <p className="text-muted-foreground truncate text-[11px]">
                                         {activeAssignment.role?.nama_role ??
                                             'Pengurus'}
                                     </p>
@@ -351,7 +352,7 @@ export function AppSidebar() {
                                     <Link
                                         href="/pilih-struktur?ganti=1"
                                         title="Ganti Struktur / Peran"
-                                        className="ml-2 inline-flex shrink-0 items-center gap-1 rounded-md border bg-background px-2 py-1 text-[11px] font-medium hover:bg-accent"
+                                        className="bg-background hover:bg-accent ml-2 inline-flex shrink-0 items-center gap-1 rounded-md border px-2 py-1 text-[11px] font-medium"
                                     >
                                         <ArrowLeftRight className="h-3 w-3" />
                                         <span>Ganti</span>

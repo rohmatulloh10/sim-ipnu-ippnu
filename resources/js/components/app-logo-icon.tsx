@@ -1,10 +1,12 @@
-import type { SVGAttributes } from "react";
+// import type { SVGAttributes } from 'react';
 
-export default function AppLogoIcon(props: React.ImgHTMLAttributes<HTMLImageElement>) {
+export default function AppLogoIcon(
+    props: React.ImgHTMLAttributes<HTMLImageElement>,
+) {
     return (
         <img
             {...props}
-            src="/storage/img/logo.png"   // atau logo.png
+            src="/storage/img/logo.png" // atau logo.png
             alt="App Logo"
         />
     );
